@@ -24,3 +24,6 @@ app.env
 
 # OS
 .DS_Store
+
+# AWS sam
+.aws-sam

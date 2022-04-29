@@ -1,0 +1,22 @@
+version = 0.1
+[jesus-dev]
+[jesus-dev.deploy]
+[jesus-dev.deploy.parameters]
+stack_name = "LeaderboardServer"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
+s3_prefix = "LeaderboardServer"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
+
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "LeaderboardServer"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
+s3_prefix = "LeaderboardServer"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []

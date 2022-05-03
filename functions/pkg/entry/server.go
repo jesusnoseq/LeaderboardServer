@@ -10,7 +10,7 @@ func GetEntryServer() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	dao := persistence.GetDao("", "")
+	dao := persistence.GetEntryDao("")
 	salt := "aaa"
 
 	api := NewEntryApi(dao, salt)

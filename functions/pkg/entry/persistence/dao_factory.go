@@ -6,7 +6,7 @@ import (
 	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/persistence/memory"
 )
 
-func GetDao(modelName string, driver string) EntryDAO {
-	log.Printf("Getting dao of %v with %v driver\n", modelName, driver)
+func GetEntryDao(driver string) EntryDAO {
+	log.Printf("Getting entry dao of with %v driver\n", driver)
 	return &memory.MemoryDAO{}
 }

@@ -19,7 +19,7 @@ func main() {
 	viper.SetDefault("HTTP_PORT", "8080")
 	salt := viper.Get("SALT").(string)
 	port := viper.Get("HTTP_PORT").(string)
-	dao := persistence.GetDao("", "")
+	dao := persistence.GetDao("")
 	startServer(dao, port, salt)
 }
 

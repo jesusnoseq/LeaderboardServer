@@ -8,7 +8,7 @@ import (
 
 type EntryDAO interface {
 	CreateEntry(context.Context, models.Entry) (models.Entry, error)
-	GetTopEntries(context.Context) ([]models.Entry, error)
+	GetEntries(context.Context) ([]models.Entry, error)
 }
 
 // type LeaderboardDAO interface {

@@ -1,4 +1,4 @@
-// package rdb
+package rdb
 
 // import (
 // 	"time"

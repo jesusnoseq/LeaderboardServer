@@ -6,15 +6,19 @@ import (
 	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/models"
 )
 
-type MemoryDAO struct {
+type EntryDAO struct {
 	entries []models.Entry
 }
 
-func (m *MemoryDAO) CreateEntry(ctx context.Context, entry models.Entry) (models.Entry, error) {
-	m.entries = append(m.entries, entry)
+func NewEntryDao() *EntryDAO {
+	return &EntryDAO{}
+}
+
+func (e *EntryDAO) CreateEntry(ctx context.Context, entry models.Entry) (models.Entry, error) {
+	e.entries = append(e.entries, entry)
 	return entry, nil
 }
 
-func (m *MemoryDAO) GetTopEntries(ctx context.Context) ([]models.Entry, error) {
-	return m.entries, nil
+func (e *EntryDAO) GetEntries(ctx context.Context) ([]models.Entry, error) {
+	return e.entries, nil
 }

@@ -1,16 +1,12 @@
 package dynamo
 
-type Entry struct {
+import (
+	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/config"
+
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+)
+
+func DefaulDynamoClient() *dynamodb.Client {
+	dyn := dynamodb.NewFromConfig(config.DefaultAwsSession())
+	return dyn
 }
-
-//LEADERBOARD_TABLE_NAME
-type DynamoDAO struct {
-	dbClient dynamodbiface.DynamoDBAPI
-}
-
-// sess := session.Must(session.NewSessionWithOptions(session.Options{
-//     SharedConfigState: session.SharedConfigEnable,
-// }))
-
-// // Create DynamoDB client
-// svc := dynamodb.New(sess)

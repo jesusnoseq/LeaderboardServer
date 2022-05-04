@@ -4,7 +4,16 @@ LINTER_ARGS = run -c .golangci.yml --timeout 5m
 CGO_CFLAGS = ""
 CMD_FILE=$(CURDIR)/$(CODE_DIR)/api/cmd/*.go
 AWS_REGION=eu-central-1
+ENVIRONMENT=qa
 
+
+.PHONY: help
+help:	## Show a list of available commands
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+.PHONY: make-debug
+make-debug:	## Debug Makefile itself
+	@echo $(UNAME)
 
 .PHONY: build
 build:
@@ -14,14 +23,6 @@ build:
 	sam build
 	echo "rebuilding to shrink binary size"
 	cd $(CODE_DIR) go build -o ../.aws-sam/build/EntryApiFunction/EntryApi -ldflags="-s -w" lambda/cmd/main.go
-
-.PHONY: help
-help:	## Show a list of available commands
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
-
-.PHONY: make-debug
-make-debug:	## Debug Makefile itself
-	@echo $(UNAME)
 
 .PHONY: fmt
 fmt:	## Format code
@@ -57,10 +58,13 @@ run-remote-debug:	## Debug remote application
 run-api:	## Run API
 	cd $(CODE_DIR) && CGO_CFLAGS=${CGO_CFLAGS} go run $(CMD_FILE)
 
-.PHONY: deploy
-deploy:
-	sam deploy
+.PHONY: validate-template
+validate-template:
+	sam validate
 
-.PHONY: remove
+.PHONY: deploy
+deploy: ## Deploy in default env
+	sam deploy --config-env $(ENVIRONMENT)
+
 remove:
-	aws cloudformation delete-stack --stack-name LeaderboardServer --region $(AWS_REGION)
+	aws cloudformation delete-stack --stack-name $(ENVIRONMENT)-LeaderboardServer --region $(AWS_REGION)

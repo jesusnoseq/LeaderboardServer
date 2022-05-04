@@ -1,22 +1,41 @@
 version = 0.1
-[jesus-dev]
-[jesus-dev.deploy]
-[jesus-dev.deploy.parameters]
-stack_name = "LeaderboardServer"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
-s3_prefix = "LeaderboardServer"
-region = "eu-central-1"
-capabilities = "CAPABILITY_IAM"
-disable_rollback = true
-image_repositories = []
 
-[default]
-[default.deploy]
-[default.deploy.parameters]
-stack_name = "LeaderboardServer"
+[qa]
+[qa.deploy]
+[qa.deploy.parameters]
+stack_name = "qa-LeaderboardServer"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
-s3_prefix = "LeaderboardServer"
+s3_prefix = "LeaderboardServer/qa"
 region = "eu-central-1"
 capabilities = "CAPABILITY_IAM"
-disable_rollback = true
-image_repositories = []
+parameter_overrides = "Environment=QA"
+
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "dev-LeaderboardServer"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
+s3_prefix = "LeaderboardServer/dev"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=DEV"
+
+[pre]
+[pre.deploy]
+[pre.deploy.parameters]
+stack_name = "pre-LeaderboardServer"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
+s3_prefix = "LeaderboardServer/pre"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=pre"
+
+[pro]
+[pro.deploy]
+[pro.deploy.parameters]
+stack_name = "pro-LeaderboardServer"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-oiphkvje8c43"
+s3_prefix = "LeaderboardServer/pro"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=pro"

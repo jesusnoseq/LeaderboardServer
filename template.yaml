@@ -5,10 +5,34 @@ Description: >
   
   SAM Template for LeaderboardServer
 
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: LeaderboardServer
+    Description: !Ref Description
+    Author: AWS Serverless Application Repository
+    SpdxLicenseId: Apache-2.0
+    Labels: [github, sam]
+    HomePageUrl: https://github.com/jesusnoseq/LeaderboardServer
+    SemanticVersion: 0.1
+    SourceCodeUrl: https://github.com/jesusnoseq/LeaderboardServer
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 10
+
+Parameters:
+  Environment:
+    Type: String
+    Description: The environment where the application is running in
+    AllowedValues:
+      - QA
+      - DEV
+      - PRE
+      - PRO
+#    Default: !Select [0, !Ref AllowedValues]
 
 Resources:
   EntryApiFunction:
@@ -28,7 +52,7 @@ Resources:
             Method: any
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
-          PARAM1: VALUE
+          Environment: ${Environment}
           LEADERBOARD_TABLE_NAME: !Ref LeaderboardTable
       Policies:
         - DynamoDBCrudPolicy:
@@ -40,7 +64,7 @@ Resources:
     Properties:
       PrimaryKey:
         Name: Id
-        Type: String
+        Type: Binary
       
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -48,7 +72,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   EntryAPI:
     Description: "API Gateway endpoint URL for Prod environment for First Function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/entry/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/entry/"
   EntryApiFunction:
     Description: "First Lambda Function ARN"
     Value: !GetAtt EntryApiFunction.Arn

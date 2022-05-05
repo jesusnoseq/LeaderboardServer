@@ -6,12 +6,11 @@ import (
 	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/persistence"
 )
 
-func GetEntryServer() *gin.Engine {
+func GetEntryServer(salt string) *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	dao := persistence.GetEntryDao("")
-	salt := "aaa"
+	dao := persistence.GetEntryDAO(persistence.Memory)
 
 	api := NewEntryApi(dao, salt)
 	api.SetupRoutes(router)

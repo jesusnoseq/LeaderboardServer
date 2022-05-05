@@ -19,12 +19,12 @@ func main() {
 	viper.SetDefault("HTTP_PORT", "8080")
 	salt := viper.Get("SALT").(string)
 	port := viper.Get("HTTP_PORT").(string)
-	dao := persistence.GetEntryDao(persistence.DYNAMO)
+	dao := persistence.GetEntryDAO(persistence.Dynamo)
 	startServer(dao, port, salt)
 }
 
 func startServer(dao persistence.EntryDAO, port string, salt string) {
-	router := entry.GetEntryServer()
+	router := entry.GetEntryServer(salt)
 	err := router.Run(":" + port)
 	if err != err {
 		log.Fatal("error runing http server", err)

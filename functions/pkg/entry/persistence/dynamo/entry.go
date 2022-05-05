@@ -14,15 +14,19 @@ import (
 	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/models"
 )
 
-type EntryRepository struct {
+const (
+	DEFAULT_ENTRY_TABLE_NAME = "Leaderboard"
+)
+
+type EntryDAO struct {
 	tableName string
 	dbclient  *dynamodb.Client
 	timeout   time.Duration
 }
 
-func NewEntryRepository(dbclient *dynamodb.Client, defaultTimeout time.Duration) *EntryRepository {
-	e := EntryRepository{
-		tableName: "LeaderboardTable",
+func NewEntryDAO(tableName string, dbclient *dynamodb.Client, defaultTimeout time.Duration) *EntryDAO {
+	e := EntryDAO{
+		tableName: tableName,
 		timeout:   defaultTimeout,
 		dbclient:  dbclient,
 	}
@@ -30,7 +34,7 @@ func NewEntryRepository(dbclient *dynamodb.Client, defaultTimeout time.Duration)
 }
 
 // read one
-func (e *EntryRepository) GetEntry(ctx context.Context, uuid string) (models.Entry, error) {
+func (e *EntryDAO) GetEntry(ctx context.Context, uuid string) (models.Entry, error) {
 	ctx, cancel := context.WithTimeout(ctx, e.timeout)
 	defer cancel()
 
@@ -58,7 +62,7 @@ func (e *EntryRepository) GetEntry(ctx context.Context, uuid string) (models.Ent
 	return entry, nil
 }
 
-func (e *EntryRepository) GetEntries(ctx context.Context) ([]models.Entry, error) {
+func (e *EntryDAO) GetEntries(ctx context.Context) ([]models.Entry, error) {
 	ctx, cancel := context.WithTimeout(ctx, e.timeout)
 	defer cancel()
 	out, err := e.dbclient.Scan(ctx, &dynamodb.ScanInput{
@@ -75,7 +79,7 @@ func (e *EntryRepository) GetEntries(ctx context.Context) ([]models.Entry, error
 // read with filters
 // https://aws.github.io/aws-sdk-go-v2/docs/code-examples/dynamodb/scanitems/#source-code
 
-func (e *EntryRepository) CreateEntry(ctx context.Context, entry models.Entry) (models.Entry, error) {
+func (e *EntryDAO) CreateEntry(ctx context.Context, entry models.Entry) (models.Entry, error) {
 	ctx, cancel := context.WithTimeout(ctx, e.timeout)
 	defer cancel()
 

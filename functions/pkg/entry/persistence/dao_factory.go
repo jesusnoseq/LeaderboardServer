@@ -17,7 +17,8 @@ func GetEntryDao(driver string) EntryDAO {
 	log.Printf("Getting entry dao of with %v driver\n", driver)
 	switch driver {
 	case DYNAMO:
-		return dynamo.NewEntryRepository(dynamo.DefaulDynamoClient(), 3*time.Second)
+		return dynamo.NewEntryDAO(dynamo.DEFAULT_ENTRY_TABLE_NAME,
+			dynamo.DefaulDynamoClient(), 5*time.Second)
 	case MEMORY:
 		return memory.NewEntryDao()
 	}

@@ -27,7 +27,7 @@ func (a EntryApi) SetupRoutes(router *gin.Engine) {
 }
 
 func (a EntryApi) GetEntries(context *gin.Context) {
-	entries, err := a.dao.GetTopEntries(context)
+	entries, err := a.dao.GetEntries(context)
 	if err != nil {
 		context.AbortWithError(http.StatusInternalServerError, err)
 		return

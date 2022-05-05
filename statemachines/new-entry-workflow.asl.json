@@ -40,52 +40,29 @@
     },
     "SendEmail": {
       "Type": "Task",
-      "Next": "Parallel",
+      "Next": "Wait for manual approval",
       "Parameters": {
         "Content": {}
       },
       "Resource": "arn:aws:states:::aws-sdk:sesv2:sendEmail.waitForTaskToken"
     },
-    "Parallel": {
-      "Type": "Parallel",
+    "Wait for manual approval": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "WaitForManualApproval",
+        "Payload.$": "$"
+      },
+      "TimeoutSeconds": 84600,
       "Next": "Choice",
-      "Branches": [
+      "Catch": [
         {
-          "StartAt": "Wait for manual approval",
-          "States": {
-            "Wait for manual approval": {
-              "Type": "Task",
-              "Resource": "arn:aws:states:::lambda:invoke",
-              "OutputPath": "$.Payload",
-              "Parameters": {
-                "FunctionName": "WaitForManualApproval",
-                "Payload.$": "$"
-              },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "Lambda.ServiceException",
-                    "Lambda.AWSLambdaException",
-                    "Lambda.SdkClientException"
-                  ],
-                  "IntervalSeconds": 2,
-                  "MaxAttempts": 6,
-                  "BackoffRate": 2
-                }
-              ],
-              "End": true
-            }
-          }
-        },
-        {
-          "StartAt": "Manual approval timeout",
-          "States": {
-            "Manual approval timeout": {
-              "Type": "Wait",
-              "Seconds": 86400,
-              "End": true
-            }
-          }
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "Next": "Write entry in DLQ",
+          "Comment": "Manual approval timeout"
         }
       ]
     },

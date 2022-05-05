@@ -26,19 +26,19 @@ build:
 
 .PHONY: fmt
 fmt:	## Format code
-	gofmt -w -s ./$(CODE_DIR)
-	goimports -w -l ./$(CODE_DIR)
+	cd $(CODE_DIR) && gofmt -w -s ./$(CODE_DIR)
+	cd $(CODE_DIR) && goimports -w -l ./$(CODE_DIR)
 
 .PHONY: tidy
 tidy:	## Prune any no-longer-needed dependencies from go.mod and add any dependencies needed
-	go mod tidy -v
+	cd $(CODE_DIR) && go mod tidy -v
 
 .PHONY: test
 test:	## Run unitary test
-	go test -p 1 -cover -v ./$(CODE_DIR)/... -timeout 5m
+	cd $(CODE_DIR) go test -p 1 -cover -v ./... -timeout 5m
 
 lint:	## Run static linting of source files. See .golangci.yml for options
-	golangci-lint $(LINTER_ARGS)
+	cd $(CODE_DIR) && golangci-lint $(LINTER_ARGS)
 
 .PHONY: download-tools
 download-tools:  ## Download all required tools to generate documentation, code analysis...

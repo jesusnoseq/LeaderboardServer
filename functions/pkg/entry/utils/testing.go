@@ -5,12 +5,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 )
-
-func NewLocalDynamoClient() *dynamodb.Client {
-	return dynamodb.NewFromConfig(CreateLocalAWSConf())
-}
 
 func CreateLocalAWSConf() aws.Config {
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
@@ -19,6 +15,11 @@ func CreateLocalAWSConf() aws.Config {
 			func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 				return aws.Endpoint{URL: "http://localhost:8000"}, nil
 			})),
+		config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
+			Value: aws.Credentials{
+				AccessKeyID: "local", SecretAccessKey: "local",
+			},
+		}),
 	)
 
 	if err != nil {

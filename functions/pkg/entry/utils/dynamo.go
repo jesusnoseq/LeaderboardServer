@@ -8,9 +8,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/config"
 )
 
-func MustCreateTableSync(
+func NewDynamoClient() *dynamodb.Client {
+	dyn := dynamodb.NewFromConfig(config.DefaultAwsSession())
+	return dyn
+}
+
+func NewLocalDynamoClient() *dynamodb.Client {
+	return dynamodb.NewFromConfig(CreateLocalAWSConf())
+}
+
+func MustCreateTable(
 	ctx context.Context,
 	dbClient *dynamodb.Client,
 	tableName string) *dynamodb.CreateTableOutput {
@@ -33,11 +43,20 @@ func MustCreateTableSync(
 	if err != nil {
 		panic(fmt.Errorf("failed to create table %q: %w", tableName, err))
 	}
-	waitForTable(ctx, dbClient, tableName)
+	WaitForTable(ctx, dbClient, tableName)
 	return out
 }
 
-func waitForTable(ctx context.Context, db *dynamodb.Client, tableName string) error {
+func MustCreateTableSync(
+	ctx context.Context,
+	dbClient *dynamodb.Client,
+	tableName string) *dynamodb.CreateTableOutput {
+	out := MustCreateTable(ctx, dbClient, tableName)
+	WaitForTable(ctx, dbClient, tableName)
+	return out
+}
+
+func WaitForTable(ctx context.Context, db *dynamodb.Client, tableName string) error {
 	w := dynamodb.NewTableExistsWaiter(db)
 	err := w.Wait(ctx,
 		&dynamodb.DescribeTableInput{
@@ -53,4 +72,23 @@ func waitForTable(ctx context.Context, db *dynamodb.Client, tableName string) er
 	}
 
 	return err
+}
+
+func ListTables(ctx context.Context, dbClient *dynamodb.Client) []string {
+	pages := dynamodb.NewListTablesPaginator(dbClient, nil, func(o *dynamodb.ListTablesPaginatorOptions) {
+		o.StopOnDuplicateToken = true
+	})
+	tables := make([]string, 0)
+	for pages.HasMorePages() {
+		out, err := pages.NextPage(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		for _, tn := range out.TableNames {
+			tables = append(tables, tn)
+			fmt.Println(tn)
+		}
+	}
+	return tables
 }

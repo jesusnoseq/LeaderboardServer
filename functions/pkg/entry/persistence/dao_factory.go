@@ -6,6 +6,7 @@ import (
 
 	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/persistence/dynamo"
 	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/persistence/memory"
+	"github.com/jesusnoseq/LeaderboardServer/functions/pkg/entry/utils"
 )
 
 const (
@@ -18,7 +19,7 @@ func GetEntryDao(driver string) EntryDAO {
 	switch driver {
 	case DYNAMO:
 		return dynamo.NewEntryDAO(dynamo.DEFAULT_ENTRY_TABLE_NAME,
-			dynamo.DefaulDynamoClient(), 5*time.Second)
+			utils.NewDynamoClient(), 5*time.Second)
 	case MEMORY:
 		return memory.NewEntryDao()
 	}
